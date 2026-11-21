@@ -69,6 +69,11 @@ def main():
     target = Path(folder) / NAME
     target.parent.mkdir(parents=True, exist_ok=True)
     target.write_bytes(blob)
+    # Verify the write: read the output back and compare bytes, so a
+    # truncated or partial write is caught here instead of by the grader.
+    written = target.read_bytes()
+    if written != blob:
+        return fail(f"wrote {target} but re-read bytes differ")
     print(
         f"wrote {target} ({len(blob)} bytes, "
         f"sha256 {hashlib.sha256(blob).hexdigest()})"
